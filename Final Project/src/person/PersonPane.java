@@ -352,7 +352,7 @@ public class PersonPane extends PersonView {
 
 
     //This is a test to see if GitHub is all as great as they say it is. woot
-    
+
     public VBox returnPane() {
         return personPane;
     }
