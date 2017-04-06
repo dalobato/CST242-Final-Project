@@ -21,8 +21,8 @@ import javafx.stage.Stage;
 public class PersonPane extends PersonView {
 
 
-    Faculty chen;
-    Student me;
+    static int updateFLAG = 0;
+    static boolean studentFlag = false;
     VBox personPane = new VBox(20);
     TopPersonPane topPersonPane = new TopPersonPane();
     HBox middlePane = new HBox(20);
@@ -32,7 +32,7 @@ public class PersonPane extends PersonView {
 
     public PersonPane() {
 
-        bottomButtonsPane.insertBtn.setOnAction((ActionEvent e) -> {
+        bottomButtonsPane.insertBtn.setOnAction(e -> {
             Stage typeStage = new Stage();
             typeStage.setTitle("New");
             HBox typeHBox = new HBox(20);
@@ -48,7 +48,7 @@ public class PersonPane extends PersonView {
             typeStage.setScene(scene);
             typeStage.show();
 
-            studentBtn.setOnAction((ActionEvent e1) -> {
+            studentBtn.setOnAction(e1 -> {
                 //Check fields
                 if (topPersonPane.firstNameField.getText() == null || topPersonPane.lastNameField.getText() == null || topPersonPane.phoneField.getText() == null
                         || topPersonPane.addressPane.streetNumberField.getText() == null || topPersonPane.addressPane.streetNameField.getText() == null
@@ -105,7 +105,7 @@ public class PersonPane extends PersonView {
                     String major = middleStudentPane.major.getSelectionModel().getSelectedItem();
 
                     Student s = new Student(fName, lName, phone, address, coursesTook, coursesTaking, coursesNeeded, gpa, creditsTaking, major);
-                    me = s;
+                    s.setType(0);
                     theBag.insert(s);
 
                     topPersonPane.firstNameField.clear();
@@ -188,7 +188,7 @@ public class PersonPane extends PersonView {
                     coursesTeaching.add(middleFacultyPane.coursesTeachingField.getText());
 
                     Faculty f = new Faculty(fName, lName, phone, address, rank, salary, coursesTeaching);
-                    chen = f;
+                    f.setType(1);
                     theBag.insert(f);
 
                     topPersonPane.firstNameField.clear();
@@ -263,23 +263,23 @@ public class PersonPane extends PersonView {
                         removeStage.close();
                     });
                 } else {
-                    Stage fStage = new Stage();
-                    fStage.setTitle("Found");
-                    VBox fVBox = new VBox(20);
-                    fVBox.setPadding(new Insets(20, 20, 20, 20));
-                    fVBox.setAlignment(Pos.CENTER);
-                    Label msg = new Label("Removed :");
-                    TextArea opt = new TextArea();
-                    opt.setEditable(false);
-                    opt.setText(theBag.searchById(id).toString());
+                    Stage foundStage = new Stage();
+                    foundStage.setTitle("Found");
+                    VBox foundVBox = new VBox(20);
+                    foundVBox.setPadding(new Insets(20, 20, 20, 20));
+                    foundVBox.setAlignment(Pos.CENTER);
+                    Label message = new Label("Removed :");
+                    TextArea output = new TextArea();
+                    output.setEditable(false);
+                    output.setText(theBag.searchById(id).toString());
                     theBag.removeById(id);
                     Button closeBtn = new Button("OK");
-                    fVBox.getChildren().addAll(msg, opt, closeBtn);
-                    Scene fScene = new Scene(fVBox);
-                    fStage.setScene(fScene);
-                    fStage.show();
+                    foundVBox.getChildren().addAll(message, output, closeBtn);
+                    Scene fScene = new Scene(foundVBox);
+                    foundStage.setScene(fScene);
+                    foundStage.show();
                     closeBtn.setOnAction(e2 -> {
-                        fStage.close();
+                        foundStage.close();
                         removeStage.close();
                     });
                 }
@@ -287,6 +287,104 @@ public class PersonPane extends PersonView {
         });
 
         bottomButtonsPane.updateBtn.setOnAction(e -> {
+            if (updateFLAG == 0) {
+                Stage updateStage = new Stage();
+                updateStage.setTitle("Search");
+                VBox updateVBox = new VBox(20);
+                updateVBox.setPadding(new Insets(20, 20, 20, 20));
+                updateVBox.setAlignment(Pos.CENTER);
+                Label updateLbl = new Label("Enter the ID of the Student of Faculty member you would like to update.");
+                TextField updateField = new TextField();
+                Button updateButton = new Button("OK");
+                updateVBox.getChildren().addAll(updateLbl, updateField, updateButton);
+                Scene updateScene = new Scene(updateVBox);
+                updateStage.setScene(updateScene);
+                updateStage.show();
+                updateButton.setOnAction(e1 -> {
+                    String id = updateField.getText();
+
+                    if (theBag.searchById(id) == null) {
+                        Stage errorStage = new Stage();
+                        errorStage.setTitle("Error");
+                        VBox errorVBox = new VBox(20);
+                        errorVBox.setPadding(new Insets(20, 20, 20, 20));
+                        errorVBox.setAlignment(Pos.CENTER);
+                        Label message = new Label("No student or faculty found at that ID.");
+                        Button closeBtn = new Button("OK");
+                        errorVBox.getChildren().addAll(message, closeBtn);
+                        Scene confScene = new Scene(errorVBox);
+                        errorStage.setScene(confScene);
+                        errorStage.show();
+                        closeBtn.setOnAction(e2 -> {
+                            errorStage.close();
+                            updateStage.close();
+                        });
+                    } else {
+                        Stage foundStage = new Stage();
+                        foundStage.setTitle("Found");
+                        VBox foundVBox = new VBox(20);
+                        foundVBox.setPadding(new Insets(20, 20, 20, 20));
+                        foundVBox.setAlignment(Pos.CENTER);
+                        Label message = new Label("Found. To update values, press 'OK' and change the fields you would like to update :");
+                        TextArea output = new TextArea();
+                        output.setEditable(false);
+                        output.setText(theBag.searchById(id).toString());
+
+                        Person p = theBag.searchById(id);
+                        Address pAddress = p.getAddress();
+                        Button closeBtn = new Button("OK");
+                        foundVBox.getChildren().addAll(message, output, closeBtn);
+                        Scene fScene = new Scene(foundVBox);
+                        foundStage.setScene(fScene);
+                        foundStage.show();
+                        closeBtn.setOnAction(e2 -> {
+                            foundStage.close();
+                            updateStage.close();
+                            bottomButtonsPane.insertBtn.setDisable(true);
+                            bottomButtonsPane.searchBtn.setDisable(true);
+                            bottomButtonsPane.removeBtn.setDisable(true);
+
+                            //Set values
+                            topPersonPane.firstNameField.setText(p.getFirstName());
+                            topPersonPane.lastNameField.setText(p.getLastName());
+                            topPersonPane.phoneField.setText(p.getPhone());
+                            topPersonPane.addressPane.streetNumberField.setText(pAddress.getStreetNumber());
+                            topPersonPane.addressPane.streetNameField.setText(pAddress.getStreetName());
+                            topPersonPane.addressPane.cityField.setText(pAddress.getCity());
+                            //FIND OUT HOW TO DO STATE
+                            topPersonPane.addressPane.stateList.getSelectionModel().select(pAddress.getState());
+                            topPersonPane.addressPane.zipField.setText(pAddress.getZip());
+
+                            if (p.getType() == 0) {
+                                Student s = (Student) p;
+                                for (String temp : s.getCoursesTook()) {
+                                    middleStudentPane.coursesTookList.getSelectionModel().select(temp);
+                                }
+                                for (String temp: s.getCoursesTaking()) {
+                                    middleStudentPane.coursesTakingList.getSelectionModel().select(temp);
+                                }
+                                for (String temp: s.getCoursesNeeded()) {
+                                    middleStudentPane.coursesNeededArea.appendText(temp);
+                                }
+
+                                middleStudentPane.major.getSelectionModel().select(s.getMajor());
+                                middleStudentPane.creditsTakingField.setText(String.valueOf(s.getCreditsTaking()));
+                                middleStudentPane.gpaField.setText(String.valueOf(s.getGpa()));
+                            } else {
+                                Faculty f = (Faculty) p;
+                                middleFacultyPane.rankField.setText(f.getRank());
+                                middleFacultyPane.salaryField.setText(String.valueOf(f.getSalary()));
+                                for (String temp: f.getCoursesTeaching()) {
+                                    middleFacultyPane.coursesTeachingField.appendText(temp);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+
+
 
         });
 
@@ -349,18 +447,6 @@ public class PersonPane extends PersonView {
         middlePane.getChildren().addAll(middleStudentPane.returnStPane(), middleFacultyPane.returnFacPane());
         personPane.getChildren().addAll(topPersonPane.returnTopPane(), middlePane, bottomButtonsPane.returnBtnPane());
     }
-
-
-    //This is a test to see if GitHub is all as great as they say it is. woot
-
-    //From PC TO MAC NOW
-
-    //Back to PC NOW. And probably time for bed.
-
-    //And one more..just for safety.
-
-    //Works on MAC. One last push.
-
 
 
     public VBox returnPane() {

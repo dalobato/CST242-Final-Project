@@ -13,6 +13,8 @@ public class Person {
     private Address address;
     private static int idNumber = 0;
 
+    private int type;
+
     public Person(String firstName, String lastName, String phone, Address address) {
         super();
         this.firstName = firstName;
@@ -74,6 +76,13 @@ public class Person {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public void setType(int i){
+        type = i;
+    }
+    public int getType(){
+        return type;
     }
 
     @Override
