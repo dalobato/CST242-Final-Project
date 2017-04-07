@@ -17,12 +17,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import sun.font.CreatedFontTracker;
 
 public class PersonPane extends PersonView {
 
 
     static int updateFLAG = 0;
-    static boolean studentFlag = false;
+    static int typeFlag;
+    static String tempID;
     VBox personPane = new VBox(20);
     TopPersonPane topPersonPane = new TopPersonPane();
     HBox middlePane = new HBox(20);
@@ -288,6 +290,7 @@ public class PersonPane extends PersonView {
 
         bottomButtonsPane.updateBtn.setOnAction(e -> {
             if (updateFLAG == 0) {
+                updateFLAG = 1;
                 Stage updateStage = new Stage();
                 updateStage.setTitle("Search");
                 VBox updateVBox = new VBox(20);
@@ -320,6 +323,7 @@ public class PersonPane extends PersonView {
                             updateStage.close();
                         });
                     } else {
+                        tempID = id;
                         Stage foundStage = new Stage();
                         foundStage.setTitle("Found");
                         VBox foundVBox = new VBox(20);
@@ -356,36 +360,240 @@ public class PersonPane extends PersonView {
                             topPersonPane.addressPane.zipField.setText(pAddress.getZip());
 
                             if (p.getType() == 0) {
+                                typeFlag = 0;
                                 Student s = (Student) p;
                                 for (String temp : s.getCoursesTook()) {
                                     middleStudentPane.coursesTookList.getSelectionModel().select(temp);
                                 }
-                                for (String temp: s.getCoursesTaking()) {
+                                for (String temp : s.getCoursesTaking()) {
                                     middleStudentPane.coursesTakingList.getSelectionModel().select(temp);
                                 }
-                                for (String temp: s.getCoursesNeeded()) {
+                                for (String temp : s.getCoursesNeeded()) {
                                     middleStudentPane.coursesNeededArea.appendText(temp);
                                 }
-
                                 middleStudentPane.major.getSelectionModel().select(s.getMajor());
                                 middleStudentPane.creditsTakingField.setText(String.valueOf(s.getCreditsTaking()));
                                 middleStudentPane.gpaField.setText(String.valueOf(s.getGpa()));
+
+                                //Disable student side
+                                middleFacultyPane.rankField.setEditable(false);
+                                middleFacultyPane.salaryField.setEditable(false);
+                                middleFacultyPane.coursesTeachingField.setEditable(false);
                             } else {
+                                typeFlag = 1;
                                 Faculty f = (Faculty) p;
                                 middleFacultyPane.rankField.setText(f.getRank());
                                 middleFacultyPane.salaryField.setText(String.valueOf(f.getSalary()));
-                                for (String temp: f.getCoursesTeaching()) {
+                                for (String temp : f.getCoursesTeaching()) {
                                     middleFacultyPane.coursesTeachingField.appendText(temp);
                                 }
+                                //Disable faculty side
+                                middleStudentPane.coursesTookList.setDisable(true);
+                                middleStudentPane.coursesTakingList.setDisable(true);
+                                middleStudentPane.coursesNeededArea.setEditable(false);
+                                middleStudentPane.major.setDisable(true);
+                                middleStudentPane.creditsTakingField.setEditable(false);
+                                middleStudentPane.gpaField.setEditable(false);
                             }
                         });
                     }
                 });
+            } else {
+                updateFLAG = 0;
+                //if student
+                if (typeFlag == 0) {
+
+                    if (topPersonPane.firstNameField.getText() == null || topPersonPane.lastNameField.getText() == null || topPersonPane.phoneField.getText() == null
+                            || topPersonPane.addressPane.streetNumberField.getText() == null || topPersonPane.addressPane.streetNameField.getText() == null
+                            || topPersonPane.addressPane.cityField.getText() == null || topPersonPane.addressPane.stateList.getSelectionModel().getSelectedItem() == null
+                            || topPersonPane.addressPane.zipField.getText() == null || middleStudentPane.coursesTookList.getSelectionModel().getSelectedItems() == null
+                            || middleStudentPane.coursesTakingList.getSelectionModel().getSelectedItems() == null || middleStudentPane.coursesNeededArea.getText() == null
+                            || middleStudentPane.gpaField.getText() == null || middleStudentPane.creditsTakingField.getText() == null) {
+
+                        Stage errorStage = new Stage();
+                        errorStage.setTitle("Error");
+                        VBox errorVBox = new VBox(20);
+                        errorVBox.setPadding(new Insets(20, 20, 20, 20));
+                        errorVBox.setAlignment(Pos.CENTER);
+                        Label message = new Label("Error. Please fill out all student field entries.");
+                        Button closeBtn = new Button("OK");
+                        errorVBox.getChildren().addAll(message, closeBtn);
+                        Scene confScene = new Scene(errorVBox);
+                        errorStage.setScene(confScene);
+                        errorStage.show();
+                        closeBtn.setOnAction(e2 -> {
+                            errorStage.close();
+                        });
+                    } else {
+
+                        Student tempS = new Student();
+
+                        tempS.setFirstName(topPersonPane.firstNameField.getText());
+                        tempS.setLastName(topPersonPane.firstNameField.getText());
+                        tempS.setPhone(topPersonPane.phoneField.getText());
+
+
+                        String streetNum = topPersonPane.addressPane.streetNumberField.getText();
+                        String streetName = topPersonPane.addressPane.streetNameField.getText();
+                        String city = topPersonPane.addressPane.cityField.getText();
+                        String state = topPersonPane.addressPane.stateList.getSelectionModel().getSelectedItem();
+                        String zip = topPersonPane.addressPane.zipField.getText();
+                        Address address = new Address(streetNum, streetName, city, state, zip);
+
+                        tempS.setAddress(address);
+
+                        ObservableList<String> coursesTo;
+                        coursesTo = middleStudentPane.coursesTookList.getSelectionModel().getSelectedItems();
+                        ArrayList<String> coursesTook = new ArrayList<String>();
+                        for (String m : coursesTo) {
+                            coursesTook.add(m);
+                        }
+                        tempS.setCoursesTook(coursesTook);
+
+                        ObservableList<String> coursesTa;
+                        coursesTa = middleStudentPane.coursesTakingList.getSelectionModel().getSelectedItems();
+                        ArrayList<String> coursesTaking = new ArrayList<String>();
+                        for (String m : coursesTa) {
+                            coursesTaking.add(m);
+                        }
+                        tempS.setCoursesTaking(coursesTaking);
+
+                        ArrayList<String> coursesNeeded = new ArrayList<String>();
+                        coursesNeeded.add(middleStudentPane.coursesNeededArea.getText());
+                        tempS.setCoursesNeeded(coursesNeeded);
+
+                        tempS.setGpa(Double.parseDouble(middleStudentPane.gpaField.getText()));
+                        tempS.setCreditsTaking(Double.parseDouble(middleStudentPane.creditsTakingField.getText()));
+                        tempS.setMajor(middleStudentPane.major.getSelectionModel().getSelectedItem());
+
+                        tempS.setType(0);
+                        tempS.setId(tempID);
+
+                        theBag.update(tempS, tempID);
+
+                        topPersonPane.firstNameField.clear();
+                        topPersonPane.lastNameField.clear();
+                        topPersonPane.phoneField.clear();
+                        topPersonPane.addressPane.streetNumberField.clear();
+                        topPersonPane.addressPane.streetNameField.clear();
+                        topPersonPane.addressPane.cityField.clear();
+                        topPersonPane.addressPane.cityField.clear();
+                        topPersonPane.addressPane.stateList.getSelectionModel().clearSelection();
+                        topPersonPane.addressPane.zipField.clear();
+                        middleStudentPane.coursesNeededArea.clear();
+                        middleStudentPane.coursesTookList.getSelectionModel().clearSelection();
+                        middleStudentPane.coursesTakingList.getSelectionModel().clearSelection();
+                        middleStudentPane.gpaField.clear();
+                        middleStudentPane.creditsTakingField.clear();
+                        middleStudentPane.major.getSelectionModel().clearSelection();
+                        middleFacultyPane.coursesTeachingField.clear();
+                        middleFacultyPane.rankField.clear();
+                        middleFacultyPane.salaryField.clear();
+
+                        Stage confirmStage = new Stage();
+                        confirmStage.setTitle("Confirmed");
+                        VBox confVBox = new VBox(20);
+                        confVBox.setPadding(new Insets(20, 20, 20, 20));
+                        confVBox.setAlignment(Pos.CENTER);
+                        Label message = new Label("Altered person:");
+                        TextArea output = new TextArea();
+//                        output.appendText(theBag.searchById(tempID).toString());
+                        Button closeBtn = new Button("OK");
+                        confVBox.getChildren().addAll(message, output, closeBtn);
+                        Scene confScene = new Scene(confVBox);
+                        confirmStage.setScene(confScene);
+                        confirmStage.show();
+                        closeBtn.setOnAction(e2 -> {
+                            confirmStage.close();
+                            bottomButtonsPane.insertBtn.setDisable(false);
+                            bottomButtonsPane.removeBtn.setDisable(false);
+                            bottomButtonsPane.searchBtn.setDisable(false);
+                        });
+                    }
+                } else {
+                    if (topPersonPane.firstNameField.getText() == null || topPersonPane.lastNameField.getText() == null || topPersonPane.phoneField.getText() == null
+                            || topPersonPane.addressPane.streetNumberField.getText() == null || topPersonPane.addressPane.streetNameField.getText() == null
+                            || topPersonPane.addressPane.cityField.getText() == null || topPersonPane.addressPane.stateList.getSelectionModel().getSelectedItem() == null
+                            || topPersonPane.addressPane.zipField.getText() == null || middleFacultyPane.rankField.getText() == null || middleFacultyPane.salaryField.getText() == null
+                            || middleFacultyPane.coursesTeachingField.getText() == null) {
+
+                        Stage errorStage = new Stage();
+                        errorStage.setTitle("Error");
+                        VBox errorVBox = new VBox(20);
+                        errorVBox.setPadding(new Insets(20, 20, 20, 20));
+                        errorVBox.setAlignment(Pos.CENTER);
+                        Label message = new Label("Error. Please fill out all faculty field entries.");
+                        Button closeBtn = new Button("OK");
+                        errorVBox.getChildren().addAll(message, closeBtn);
+                        Scene confScene = new Scene(errorVBox);
+                        errorStage.setScene(confScene);
+                        errorStage.show();
+                        closeBtn.setOnAction(e2 -> {
+                            errorStage.close();
+                        });
+                    } else {
+
+                        String fName = topPersonPane.firstNameField.getText();
+                        String lName = topPersonPane.lastNameField.getText();
+                        String phone = topPersonPane.phoneField.getText();
+
+                        String streetNum = topPersonPane.addressPane.streetNumberField.getText();
+                        String streetName = topPersonPane.addressPane.streetNameField.getText();
+                        String city = topPersonPane.addressPane.cityField.getText();
+                        String state = topPersonPane.addressPane.stateList.getSelectionModel().getSelectedItem();
+                        String zip = topPersonPane.addressPane.zipField.getText();
+                        Address address = new Address(streetNum, streetName, city, state, zip);
+
+                        String rank = middleFacultyPane.rankField.getText();
+                        Double salary = Double.parseDouble(middleFacultyPane.salaryField.getText());
+                        ArrayList<String> coursesTeaching = new ArrayList<String>();
+                        coursesTeaching.add(middleFacultyPane.coursesTeachingField.getText());
+
+                        Faculty tempF = new Faculty(fName, lName, phone, address, rank, salary, coursesTeaching);
+                        tempF.setType(1);
+                        theBag.update(tempF, tempID);
+
+                        topPersonPane.firstNameField.clear();
+                        topPersonPane.lastNameField.clear();
+                        topPersonPane.phoneField.clear();
+                        topPersonPane.addressPane.streetNumberField.clear();
+                        topPersonPane.addressPane.streetNameField.clear();
+                        topPersonPane.addressPane.cityField.clear();
+                        topPersonPane.addressPane.cityField.clear();
+                        topPersonPane.addressPane.stateList.getSelectionModel().clearSelection();
+                        topPersonPane.addressPane.zipField.clear();
+                        middleStudentPane.coursesNeededArea.clear();
+                        middleStudentPane.coursesTookList.getSelectionModel().clearSelection();
+                        middleStudentPane.coursesTakingList.getSelectionModel().clearSelection();
+                        middleStudentPane.gpaField.clear();
+                        middleStudentPane.creditsTakingField.clear();
+                        middleStudentPane.major.getSelectionModel().clearSelection();
+                        middleFacultyPane.coursesTeachingField.clear();
+                        middleFacultyPane.rankField.clear();
+                        middleFacultyPane.salaryField.clear();
+
+                        Stage confirmStage = new Stage();
+                        confirmStage.setTitle("Confirmed");
+                        VBox confVBox = new VBox(20);
+                        confVBox.setPadding(new Insets(20, 20, 20, 20));
+                        confVBox.setAlignment(Pos.CENTER);
+                        Label message = new Label("Updated: ");
+                        TextArea output = new TextArea();
+                        //output.appendText(theBag.searchById(tempID).toString());
+                        Button closeBtn = new Button("OK");
+                        confVBox.getChildren().addAll(message, output, closeBtn);
+                        Scene confScene = new Scene(confVBox);
+                        confirmStage.setScene(confScene);
+                        confirmStage.show();
+                        closeBtn.setOnAction(e2 -> {
+                            confirmStage.close();
+                            bottomButtonsPane.insertBtn.setDisable(false);
+                            bottomButtonsPane.removeBtn.setDisable(false);
+                            bottomButtonsPane.searchBtn.setDisable(false);
+                        });
+                    }
+                }
             }
-
-
-
-
         });
 
         bottomButtonsPane.searchBtn.setOnAction(e -> {

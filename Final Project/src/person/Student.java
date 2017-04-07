@@ -11,6 +11,10 @@ public class Student extends Person {
     private double creditsTaking;
     private String major;
 
+    public Student(){
+        super();
+    }
+
     public Student(String firstName, String lastName, String phone, Address address, ArrayList<String> coursesTook,
                    ArrayList<String> coursesTaking, ArrayList<String> coursesNeeded, double gpa, double creditsTaking,
                    String major) {

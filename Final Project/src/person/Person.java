@@ -15,6 +15,11 @@ public class Person {
 
     private int type;
 
+    public Person() {
+    }
+
+
+
     public Person(String firstName, String lastName, String phone, Address address) {
         super();
         this.firstName = firstName;
@@ -62,6 +67,10 @@ public class Person {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getPhone() {
         return phone;
     }
@@ -78,10 +87,11 @@ public class Person {
         this.address = address;
     }
 
-    public void setType(int i){
+    public void setType(int i) {
         type = i;
     }
-    public int getType(){
+
+    public int getType() {
         return type;
     }
 
@@ -90,5 +100,4 @@ public class Person {
         return "Person [firstName=" + firstName + ", lastName=" + lastName + ", id=" + id + ", phone=" + phone
                 + ", address=" + address + "]";
     }
-
 }

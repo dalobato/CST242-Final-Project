@@ -48,12 +48,13 @@ public class BodyBag {
     }
 
     // update()
-    public String update() {
-        String output = "";
+    public void update(Person p, String id) {
         for (int i = 0; i < nElems; i++) {
-            output = output + (peopleArray[i]) + "\n";
+            if (peopleArray[i].getId().equals(id)) {
+                peopleArray[i] = p;
+
+            }
         }
-        return output;
     }
 
 }
