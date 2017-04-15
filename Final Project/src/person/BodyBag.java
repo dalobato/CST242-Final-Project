@@ -1,6 +1,8 @@
 package person;
 
-public class BodyBag {
+import java.io.Serializable;
+
+public class BodyBag implements Serializable{
     private Person[] peopleArray;
     private int nElems;
 
@@ -55,6 +57,13 @@ public class BodyBag {
 
             }
         }
+    }
+
+    public void display(){
+        for(int i = 0; i < nElems; i++) {
+            System.out.println(peopleArray[i]);
+        }
+        System.out.println();
     }
 
 }

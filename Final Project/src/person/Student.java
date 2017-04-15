@@ -1,19 +1,16 @@
 package person;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Student extends Person {
+public class Student extends Person implements Serializable{
     private ArrayList<String> coursesTook;
     private ArrayList<String> coursesTaking;
     private ArrayList<String> coursesNeeded;
     private double gpa;
     private double creditsTaking;
     private String major;
-
-    public Student(){
-        super();
-    }
 
     public Student(String firstName, String lastName, String phone, Address address, ArrayList<String> coursesTook,
                    ArrayList<String> coursesTaking, ArrayList<String> coursesNeeded, double gpa, double creditsTaking,
@@ -25,6 +22,8 @@ public class Student extends Person {
         this.gpa = gpa;
         this.creditsTaking = creditsTaking;
         this.major = major;
+
+
     }
 
     public ArrayList<String> getCoursesTook() {
@@ -95,8 +94,8 @@ public class Student extends Person {
 
     @Override
     public String toString() {
-        return "Student [ First Name: " + getFirstName() + "\n Last Name: " + getLastName() + "\n ID: " + getId() + "\n Phone Number: "
+        return "Student:" + "\nFirst Name: " + getFirstName() + "\n Last Name: " + getLastName() + "\n ID: " + getId() + "\n Phone Number: "
                 + getPhone() + "\n Address:" + getAddress() + "\n Courses Took:" + coursesTook + "\n Courses Taking:" + coursesTaking
-                + "\n Courses Needed:" + coursesNeeded + "\n GPA: " + gpa + "\n Credits Enrolled: " + creditsTaking + "\n Major: " + major + " ]";
+                + "\n Courses Needed:" + coursesNeeded + "\n GPA: " + gpa + "\n Credits Enrolled: " + creditsTaking + "\n Major: " + major;
     }
 }

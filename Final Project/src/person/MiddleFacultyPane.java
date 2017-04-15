@@ -2,26 +2,30 @@ package person;
 
 import javafx.geometry.Insets;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 public class MiddleFacultyPane {
 
-    GridPane facultyPane = new GridPane();
-    Label rankLbl;
-    TextField rankField;
-    Label salaryLbl;
-    TextField salaryField;
-    Label coursesTeachingLbl;
-    TextField coursesTeachingField;
+    private GridPane facultyPane;
+    private Label rankLbl;
+    private TextField rankField;
+    private Label salaryLbl;
+    private TextField salaryField;
+    private Label coursesTeachingLbl;
+    private TextField coursesTeachingField;
 
     public MiddleFacultyPane() {
 
-        facultyPane.setPadding(new Insets(20, 20, 20, 20));
+        facultyPane = new GridPane();
         facultyPane.setStyle("-fx-background-color: TOMATO;");
+        facultyPane.setAlignment(Pos.CENTER);
+        facultyPane.setPadding(new Insets(10, 20, 20, 20));
         facultyPane.setHgap(10);
-        facultyPane.setVgap(10);
+
 
 
         rankLbl = new Label("Rank:");
@@ -32,12 +36,12 @@ public class MiddleFacultyPane {
         coursesTeachingField = new TextField();
 
 
-        facultyPane.add(rankLbl, 2, 10);
-        facultyPane.add(rankField, 2, 11);
-        facultyPane.add(salaryLbl, 2, 12);
-        facultyPane.add(salaryField, 2, 13);
-        facultyPane.add(coursesTeachingLbl, 2, 14);
-        facultyPane.add(coursesTeachingField, 2, 15);
+        facultyPane.add(rankLbl, 0, 0);
+        facultyPane.add(rankField, 0, 1);
+        facultyPane.add(salaryLbl, 1, 0);
+        facultyPane.add(salaryField, 1, 1);
+        facultyPane.add(coursesTeachingLbl, 2, 0);
+        facultyPane.add(coursesTeachingField, 2, 1);
 
     }
 
@@ -45,5 +49,45 @@ public class MiddleFacultyPane {
         return facultyPane;
     }
 
+    public void setFacultyPane(GridPane facultyPane){
+        this.facultyPane = facultyPane;
+    }
 
+    public TextField getRankField() {
+        return rankField;
+    }
+
+    public void setRankField(TextField rankField) {
+        this.rankField = rankField;
+    }
+
+    public TextField getSalaryField() {
+        return salaryField;
+    }
+
+    public void setSalaryField(TextField salaryField) {
+        this.salaryField = salaryField;
+    }
+
+    public TextField getCoursesTeachingField() {
+        return coursesTeachingField;
+    }
+
+    public void setCoursesTeachingField(TextField coursesTeachingField) {
+        this.coursesTeachingField = coursesTeachingField;
+    }
+
+    public void clearFields(){
+        rankField.clear();
+        salaryField.clear();
+        coursesTeachingField.clear();
+    }
+
+    public void setFields(Faculty f){
+        rankField.setText(f.getRank());
+        salaryField.setText(String.valueOf(f.getSalary()));
+        for (String temp : f.getCoursesTeaching()) {
+            coursesTeachingField.appendText(temp + ", ");
+        }
+    }
 }

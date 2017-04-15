@@ -3,22 +3,16 @@ package person;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class Person {
+public class Person implements Serializable{
     private String firstName;
     private String lastName;
     private String id;
     private String phone;
     private Address address;
     private static int idNumber = 0;
-
-    private int type;
-
-    public Person() {
-    }
-
-
 
     public Person(String firstName, String lastName, String phone, Address address) {
         super();
@@ -67,10 +61,6 @@ public class Person {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getPhone() {
         return phone;
     }
@@ -85,14 +75,6 @@ public class Person {
 
     public void setAddress(Address address) {
         this.address = address;
-    }
-
-    public void setType(int i) {
-        type = i;
-    }
-
-    public int getType() {
-        return type;
     }
 
     @Override

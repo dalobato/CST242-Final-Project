@@ -1,11 +1,13 @@
 package person;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Faculty extends Person {
+public class Faculty extends Person implements Serializable{
     private String rank;
     private double salary;
     private ArrayList<String> coursesTeaching;
+
 
     public Faculty(String firstName, String lastName, String phone, Address address, String rank,
                    double salary, ArrayList<String> coursesTeaching) {
@@ -41,9 +43,9 @@ public class Faculty extends Person {
 
     @Override
     public String toString() {
-        return "Faculty [ First Name: " + getFirstName() + "\n Last Name: " + getLastName() + "\n ID: " + getId() + "\n Phone Number: "
+        return "Faculty:" +  "\nFirst Name:" + getFirstName() + "\n Last Name: " + getLastName() + "\n ID: " + getId() + "\n Phone Number: "
                 + getPhone() + "\n Address: " + getAddress() + "\n Rank: " + rank + "\n Salary: " + salary
-                + "\n Courses Teaching: " + coursesTeaching + " ]";
+                + "\n Courses Teaching: " + coursesTeaching;
     }
 
 }
