@@ -3,7 +3,7 @@ package textbook;
 /**
  * Created by dalob on 4/5/2017.
  */
-public class Bookbag {
+public class Bookbag implements Serializable {
     private Textbook[] bookArray;
     private int nElems;
 
