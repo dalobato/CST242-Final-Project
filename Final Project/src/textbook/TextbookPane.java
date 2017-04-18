@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 
@@ -15,6 +16,7 @@ import javafx.scene.layout.VBox;
  */
 public class TextbookPane {
     private VBox textbookPane;
+    private GridPane authorFieldsPane;
     private TextField textbookTitleField;
     private TextField textbookISBNField;
     private TextField textbookPriceField;
@@ -42,7 +44,7 @@ public class TextbookPane {
         bookFieldsName.setAlignment(Pos.CENTER);
         bookFieldsName.setHgap(20);
 
-        GridPane authorFieldsPane = new GridPane();
+        authorFieldsPane = new GridPane();
         authorFieldsPane.setAlignment(Pos.CENTER);
         authorFieldsPane.setHgap(20);
 
@@ -170,5 +172,35 @@ public class TextbookPane {
         textbookTitleField.clear();
         textbookISBNField.clear();
         textbookPriceField.clear();
+    }
+
+    public void setFields(Textbook t){
+
+//    	authorFieldsPane.add(authorFirstNameLbl, 0, 0);
+//        authorFieldsPane.add(authorFirstNameField, 0, 1);
+//        authorFieldsPane.add(authorLastNameLbl, 1, 0);
+//        authorFieldsPane.add(authorLastNameField, 1, 1);
+//
+
+    	int firstNameCounter = 1;
+    	// Authors FN
+    	for (Author a : t.getBookAuthors()){
+    		//authorFirstNameField.appendText(a.getAuthorFirstName() + ", ");
+    		TextField newFNAuthorField = new TextField();
+    		newFNAuthorField.setText(a.getAuthorFirstName());
+    		authorFieldsPane.add(newFNAuthorField, 0, firstNameCounter);
+    		firstNameCounter++;
+    	}
+
+    	int lastNameCounter = 1;
+    	for (Author a : t.getBookAuthors()){
+    		TextField newLNAuthorField = new TextField();
+    		newLNAuthorField.setText(a.getAuthorLastName());
+    		authorFieldsPane.add(newLNAuthorField, 1, lastNameCounter);
+    		lastNameCounter++;
+    	}
+    	textbookTitleField.setText(t.getBookTitle());
+    	textbookISBNField.setText(t.getBookISBN());
+    	textbookPriceField.setText(String.valueOf(t.getBookPrice()));
     }
 }
