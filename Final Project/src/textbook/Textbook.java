@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Created by dalob on 4/5/2017.
  */
-public class Textbook {
+public class Textbook implements Serializable {
 
     String bookISBN;
     String bookTitle;
